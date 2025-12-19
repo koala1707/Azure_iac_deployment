@@ -20,11 +20,19 @@ module "resource-group" {
 }
 
 module "app-service-plan" {
-  source = "git::https://github.com/koala1707/terraform_modules.git//modules/app-service"
-  azurerm_service_plan = {
-    name = "${local.prefix}-asp"
-    sku = "F1"
-  }
+  source = "git::https://github.com/koala1707/terraform_modules.git//modules/app-service-plan"
+  name = "${local.prefix}-asp"
   resource_group_name = module.resource-group.name
+  sku = "F1"
   location = var.location
+}
+
+module "web-app" {
+  source = "git::https://github.com/koala1707/terraform_modules.git//modules/web-app"
+  webapp_name = "${local.prefix}-webApp"
+  resource_group_name = module.resource-group.name
+  asp_location = module.app-service-plan.location
+  asp_id = module.app-service-plan.id
+  env = var.env
+  project_name = local.prefix
 }
