@@ -51,7 +51,7 @@ module "storage_account" {
 module "storage_container" {
   source =  "git::https://github.com/koala1707/terraform_modules.git//modules/storage_container?ref=feature/storage-account-module"
   storage_account_name = module.storage_account.storage_account_name
-  name = "${local.prefix}-logic"
+  name = "${local.prefix}"
   storage_account_id = module.storage_account.storage_account_id
 
 }
