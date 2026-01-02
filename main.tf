@@ -56,7 +56,7 @@ module "storage_container" {
 }
 
 module "diagnostic_webapp" {
-  source = "git::https://github.com/koala1707/terraform_modules.git//diagnostic_setting?ref=feature/diagnostic-setting-module"
+  source = "git::https://github.com/koala1707/terraform_modules.git//diagnostic_setting"
   name = local.prefix
   target_resource_id = module.web_app.webapp_id
   storage_account_id = module.storage_account.storage_account_id
