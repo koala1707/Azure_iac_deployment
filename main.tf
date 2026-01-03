@@ -62,3 +62,12 @@ module "diagnostic_webapp" {
   storage_account_id = module.storage_account.storage_account_id
   log_categories = local.app_service_log_categories
 }
+
+module "key_vault" {
+  source = "git::https://github.com/koala1707/terraform_modules.git//key_vault?ref=feature/key-vault-module"
+  name = "${local.prefix}-kv-${var.env}"
+  location = var.location
+  resource_group_name = module.resource_group.name
+  tenant_id = var.tenant_id
+  object_id = module.web_app.webapp_id
+}
