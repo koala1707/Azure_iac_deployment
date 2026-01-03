@@ -60,4 +60,5 @@ module "diagnostic_webapp" {
   name = local.prefix
   target_resource_id = module.web_app.webapp_id
   storage_account_id = module.storage_account.storage_account_id
+  log_categories = local.app_service_log_categories
 }
