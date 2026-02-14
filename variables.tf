@@ -22,4 +22,5 @@ variable "tenant_id" {
 variable "region" {
   type = string
   description = "region of the resource"
+  default = "aue"
 }
