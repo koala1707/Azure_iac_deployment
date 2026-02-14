@@ -19,12 +19,12 @@ data "azurerm_subscription" "primary" {}
 module "resource_group" {
   source = "git::https://github.com/koala1707/terraform_modules.git//resource_group?ref=feature/diagnostic-setting-module"
   location = var.location
-  name = "${local.prefix}-rg-${var.env}"
+  name = "rg-${local.workload}-${var.env}-${var.region}"
 }
 
 module "app_service_plan" {
   source = "git::https://github.com/koala1707/terraform_modules.git//app_service_plan?ref=feature/diagnostic-setting-module"
-  name = "${local.prefix}-asp-${var.env}"
+  name = "asp-${local.workload}-${var.env}-${var.region}"
   resource_group_name = module.resource_group.name
   sku = "F1"
   location = var.location
@@ -32,17 +32,17 @@ module "app_service_plan" {
 
 module "web_app" {
   source = "git::https://github.com/koala1707/terraform_modules.git//web_app?ref=feature/diagnostic-setting-module"
-  webapp_name = "${local.prefix}-webapp-${var.env}"
+  webapp_name = "webapp-${local.workload}-${var.env}-${var.region}"
   resource_group_name = module.resource_group.name
   asp_location = module.app_service_plan.location
   asp_id = module.app_service_plan.id
   env = var.env
-  project_name = local.prefix
+  project_name = local.workload
 }
 
 module "storage_account" {
   source = "git::https://github.com/koala1707/terraform_modules.git//storage_account?ref=feature/diagnostic-setting-module"
-  storage_account_name = "${local.prefix}st"
+  storage_account_name = "st${local.workload}${var.env}${var.region}"
   resource_group_name = module.resource_group.name
   location = var.location
   account_tier = "Standard"
@@ -54,13 +54,13 @@ module "storage_account" {
 module "storage_container" {
   source =  "git::https://github.com/koala1707/terraform_modules.git//storage_container?ref=feature/diagnostic-setting-module"
   storage_account_name = module.storage_account.storage_account_name
-  name = local.prefix
+  name = local.workload
   storage_account_id = module.storage_account.storage_account_id
 }
 
 module "diagnostic_webapp" {
   source = "git::https://github.com/koala1707/terraform_modules.git//diagnostic_setting"
-  name = local.prefix
+  name = "diag-${local.workload}-${var.env}-${var.region}"
   target_resource_id = module.web_app.webapp_id
   storage_account_id = module.storage_account.storage_account_id
   log_categories = local.app_service_log_categories
@@ -68,7 +68,7 @@ module "diagnostic_webapp" {
 
 module "key_vault" {
   source = "git::https://github.com/koala1707/terraform_modules.git//key_vault?ref=feature/key-vault-module"
-  name = "${local.prefix}-kv-${var.env}"
+  name = "kv-${local.workload}-${var.env}-${var.region}"
   location = var.location
   resource_group_name = module.resource_group.name
   tenant_id = var.tenant_id

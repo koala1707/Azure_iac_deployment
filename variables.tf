@@ -18,3 +18,8 @@ variable "tenant_id" {
   type = string
   description = "id of the tenant"
 }
+
+variable "region" {
+  type = string
+  description = "region of the resource"
+}
