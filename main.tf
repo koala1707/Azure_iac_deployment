@@ -13,6 +13,9 @@ provider "azurerm" {
   features {}
 }
 
+data "azurerm_client_config" "current" {}
+data "azurerm_subscription" "primary" {}
+
 module "resource_group" {
   source = "git::https://github.com/koala1707/terraform_modules.git//resource_group?ref=feature/diagnostic-setting-module"
   location = var.location
@@ -70,4 +73,18 @@ module "key_vault" {
   resource_group_name = module.resource_group.name
   tenant_id = var.tenant_id
   object_id = module.web_app.webapp_id
+}
+
+module "terraform_rbac" {
+  source = "git::https://github.com/koala1707/terraform_modules.git//role_assignment?ref=feature/key-vault-module"
+  scope = data.azurerm_subscription.primary.id
+  role_definition = "Contributor"
+  principal_id = data.azurerm_client_config.current.object_id
+}
+
+module "webapp_rbac" {
+  source = "git::https://github.com/koala1707/terraform_modules.git//role_assignment?ref=feature/key-vault-module"
+  scope = module.key_vault.id
+  role_definition = "Key Vault Secrets User"
+  principal_id = module.web_app.identity.principal_id
 }
