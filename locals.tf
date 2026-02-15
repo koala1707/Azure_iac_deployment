@@ -1,5 +1,5 @@
 locals {
-  prefix = var.project_name
+  workload = var.project_name
 
   app_service_log_categories = [
     "AppServiceHTTPLogs",
